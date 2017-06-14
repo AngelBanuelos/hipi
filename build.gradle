@@ -32,6 +32,7 @@ subprojects {
 }
 
 task install {
+  dependsOn(':tools:face:jar')
   dependsOn(':tools:hibImport:jar')
   dependsOn(':tools:hibDownload:jar')
   dependsOn(':tools:hibInfo:jar')
