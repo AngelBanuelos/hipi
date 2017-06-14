@@ -20,6 +20,7 @@ public class FaceUtils {
 
 		// Convert FloatImage to Mat, and convert Mat to grayscale (if
 		// necessary)
+		//Test 
 		HipiColorSpace colorSpace = image.getColorSpace();
 		switch (colorSpace) {
 
