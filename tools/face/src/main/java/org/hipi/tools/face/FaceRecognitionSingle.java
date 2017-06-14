@@ -70,6 +70,7 @@ public class FaceRecognitionSingle {
 	}
 
 	private void configFRG(String name) {
+		//Test
 		switch (recognizerMethod) {
 		case 1:
 			System.out.println("opencv_face.createLBPHFaceRecognizer()");
@@ -155,17 +156,32 @@ public class FaceRecognitionSingle {
 		}
 	}
 
+//	public int predict(RasterImage floatImage) {
+//		Mat testImage = null;
+//		FaceUtils.convertFloatImageToGrayscaleMat(floatImage, testImage);
+//		int predictedLabel = faceRecognizer.predict(testImage);
+//		return predictedLabel;
+//	}
+//
+//	public int predict(Mat image) {
+//		// Mat imageRGB = image;
+//		// opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
+//		int predictedLabel = faceRecognizer.predict(image);
+//		return predictedLabel;
+//	}
+	
+	
 	public int predict(RasterImage floatImage) {
 		Mat testImage = null;
 		FaceUtils.convertFloatImageToGrayscaleMat(floatImage, testImage);
-		int predictedLabel = faceRecognizer.predict(testImage);
+		int predictedLabel = faceRecognizer.predict_label(testImage);
 		return predictedLabel;
 	}
 
 	public int predict(Mat image) {
 		// Mat imageRGB = image;
 		// opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
-		int predictedLabel = faceRecognizer.predict(image);
+		int predictedLabel = faceRecognizer.predict_label(image);
 		return predictedLabel;
 	}
 
