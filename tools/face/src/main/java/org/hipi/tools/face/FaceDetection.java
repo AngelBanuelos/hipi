@@ -19,8 +19,8 @@ public class FaceDetection extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 	
 		// Check input arguments
-		if (args.length != 2) {
-			System.out.println("Usage: FaceDetection <input HIB> <output directory>");
+		if (args.length != 3) {
+			System.out.println("Usage: FaceDetection <HAAR-LIKE cascade xml> <input HIB> <output directory>");
 			System.exit(0);
 		}
 
@@ -43,11 +43,11 @@ public class FaceDetection extends Configured implements Tool {
 		job.setOutputValueClass(Text.class);
 		
 		//Adding the HAAR-LIKE trained neural red.
-		job.addCacheFile(new URI("/user/angel/utils/lbpcascade_frontalface.xml#lbpcascade_frontalface.xml"));
+		job.addCacheFile(new URI(args[0]));
 		
 		// Set the input and output paths on the HDFS
-		FileInputFormat.setInputPaths(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		FileInputFormat.setInputPaths(job, new Path(args[1]));
+		FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
 		//Create just one reduce task
 		job.setNumReduceTasks(1);
