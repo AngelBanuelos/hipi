@@ -65,21 +65,45 @@ If the build fails, first carefully review the steps above. If you are convinced
 After the build successfully finishes, you may want to inspect the `settings.gradle` file in the root directory along with the `build.gradle` files in the root, core, and tools directories in order to familiarize yourself with the various build targets. If you're new to Gradle, we recommend reading the [Gradle Java Tutorial](https://docs.gradle.org/current/userguide/tutorial_java_projects.html). For example, to build only the [tools/hibImport](http://hipi.cs.virginia.edu/tools/hibImport.html) tool from scratch:
 
 
-      $> gradle clean tools:hibImport:jar
-      :core:clean
-      ...
-      :core:compileJava
-      :core:processResources UP-TO-DATE
-      :core:classes
-      :core:jar
-      :tools:hibImport:compileJava
-      :tools:hibImport:processResources UP-TO-DATE
-      :tools:hibImport:classes
-      :tools:hibImport:jar
+      $> gradle jar 
+	:core:processResources UP-TO-DATE
+	:core:classes
+	:core:jar UP-TO-DATE
+	:tools:covar:compileJava
+	:tools:covar:processResources UP-TO-DATE
+	:tools:covar:classes
+	:tools:covar:jar
+	:tools:face:compileJava
+	:tools:face:processResources UP-TO-DATE
+	:tools:face:classes
+	:tools:face:jar
+	:tools:hibDownload:compileJava
+	:tools:hibDownload:processResources UP-TO-DATE
+	:tools:hibDownload:classes
+	:tools:hibDownload:jar
+	:tools:hibDump:compileJava
+	:tools:hibDump:processResources UP-TO-DATE
+	:tools:hibDump:classes
+	:tools:hibDump:jar
+	:tools:hibImport:compileJava
+	:tools:hibImport:processResources UP-TO-DATE
+	:tools:hibImport:classes
+	:tools:hibImport:jar
+	:tools:hibInfo:compileJava
+	:tools:hibInfo:processResources UP-TO-DATE
+	:tools:hibInfo:classes
+	:tools:hibInfo:jar
+	:tools:hibToJpeg:compileJava
+	:tools:hibToJpeg:processResources UP-TO-DATE
+	:tools:hibToJpeg:classes
+	:tools:hibToJpeg:jar
+	:install
 
-      BUILD SUCCESSFUL
+	Finished building the HIPI library along with all tools and examples.
 
-      Total time: 1.197 secs
+	BUILD SUCCESSFUL
+
+	Total time: 43.473 secs
 
 HIPI is now installed on your system. To learn about future updates to the HIPI distribution you should join the [HIPI Users Group](https://groups.google.com/forum/#!forum/hipi-users) and watch this repository. You can always obtain the latest version of HIPI on the release branch with the following command:
 
