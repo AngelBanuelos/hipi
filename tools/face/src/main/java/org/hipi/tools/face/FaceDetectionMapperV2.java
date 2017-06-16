@@ -26,7 +26,7 @@ public class FaceDetectionMapperV2 extends Mapper<HipiImageHeader, FloatImage, T
 
 	static {
 		//When using the native opencv lib is necessary to load the native lib first.
-		System.load("/opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/lib/opencvlibs/lib/libopencv_java300.so");
+		System.load("/usr/local/share/OpenCV/java/libopencv_java300.so");
 	}
 
 	// Create a face detector from the cascade file in the resources
