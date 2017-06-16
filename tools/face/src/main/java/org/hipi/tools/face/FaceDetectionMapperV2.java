@@ -26,6 +26,7 @@ public class FaceDetectionMapperV2 extends Mapper<HipiImageHeader, FloatImage, T
 
 	static {
 		//When using the native opencv lib is necessary to load the native lib first.
+		
 		System.load("/usr/local/share/OpenCV/java/libopencv_java300.so");
 	}
 
