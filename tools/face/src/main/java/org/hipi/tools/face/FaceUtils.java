@@ -118,6 +118,10 @@ public class FaceUtils {
 	 */
 	public static org.opencv.core.Mat convertFloatImageToOpenCVMat(FloatImage floatImage) {
 		
+		if(floatImage ==  null){
+			return null;
+		}
+		
 		// Get dimensions of image
 		int w = floatImage.getWidth();
 		int h = floatImage.getHeight();

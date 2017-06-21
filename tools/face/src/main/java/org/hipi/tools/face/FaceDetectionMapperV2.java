@@ -36,7 +36,11 @@ public class FaceDetectionMapperV2 extends Mapper<HipiImageHeader, FloatImage, T
 
 	//Count faces.
 	public int countFaces(Mat cvImage){
+		if(cvImage == null) {
+			return 0 ;
+		}
 		if (faceDetector == null) {
+			//TODO verify why this is is hard coded 
 			faceDetector = new CascadeClassifier("./lbpcascade_frontalface.xml");
 		}
 		if (faceDetector == null) {

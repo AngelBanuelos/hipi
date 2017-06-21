@@ -219,7 +219,10 @@ public class HipiImageBundle {
 
         if (bytesRead < sig.length) {
           // Read part of signature before encountering EOF. Malformed file.
-          throw new IOException(String.format("Failed to read %d-byte HIB image signature that delineates image record boundaries.", sig.length));
+        	//TODO Work around to skip images malformed
+        	return true;
+        	//TODO remove next commented line 
+//          throw new IOException(String.format("Failed to read %d-byte HIB image signature that delineates image record boundaries.", sig.length));
         }
 
         // Parse and validate image header length
