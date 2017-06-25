@@ -21,5 +21,4 @@ public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, I
 		context.write(new IntWritable(0), new OpenCVMatWritable(faceRecognition));
 
 	}
-
 }
