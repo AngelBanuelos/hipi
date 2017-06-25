@@ -240,7 +240,10 @@ public class HipiImageBundle {
 						| (sig[3] & 0xff);
 				if (imageHeaderLength <= 0) {
 					// Negative or zero file length, report corrupted HIB
-					throw new IOException("Found image header length <= 0 in HIB at offset: " + currentOffset);
+					// TODO Work around to skip images malformed
+					return true;
+					// TODO remove next commented line
+//					throw new IOException("Found image header length <= 0 in HIB at offset: " + currentOffset);
 				}
 
 				// Parse and validate image length
@@ -248,7 +251,11 @@ public class HipiImageBundle {
 						| (sig[7] & 0xff);
 				if (imageLength <= 0) {
 					// Negative or zero file length, report corrupted HIB
-					throw new IOException("Found image data segment length <= 0 in HIB at offset: " + currentOffset);
+					// TODO Work around to skip images malformed
+					return true;
+					// TODO remove next commented line
+					// throw new IOException("Found image data segment length <=
+					// 0 in HIB at offset: " + currentOffset);
 				}
 
 				// Parse and validate image format
