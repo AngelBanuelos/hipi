@@ -212,7 +212,7 @@ public class HipiImageBundle {
 
 				int sigOffset = 0;
 				int bytesRead = dataInputStream.read(sig);
-
+				
 				// Even reading signature might require multiple calls
 				while (bytesRead < (sig.length - sigOffset) && bytesRead > 0) {
 					sigOffset += bytesRead;
@@ -225,6 +225,7 @@ public class HipiImageBundle {
 				}
 
 				if (bytesRead < sig.length) {
+					System.err.println(" Malformed file " );
 					// Read part of signature before encountering EOF. Malformed
 					// file.
 					// TODO Work around to skip images malformed
@@ -239,6 +240,7 @@ public class HipiImageBundle {
 				int imageHeaderLength = ((sig[0] & 0xff) << 24) | ((sig[1] & 0xff) << 16) | ((sig[2] & 0xff) << 8)
 						| (sig[3] & 0xff);
 				if (imageHeaderLength <= 0) {
+					System.err.println(" 1 Negative or zero file length, report corrupted HIB " );
 					// Negative or zero file length, report corrupted HIB
 					// TODO Work around to skip images malformed
 					return true;
@@ -250,6 +252,7 @@ public class HipiImageBundle {
 				int imageLength = ((sig[4] & 0xff) << 24) | ((sig[5] & 0xff) << 16) | ((sig[6] & 0xff) << 8)
 						| (sig[7] & 0xff);
 				if (imageLength <= 0) {
+					System.err.println(" 2 Negative or zero file length, report corrupted HIB " );
 					// Negative or zero file length, report corrupted HIB
 					// TODO Work around to skip images malformed
 					return true;
@@ -264,6 +267,8 @@ public class HipiImageBundle {
 				try {
 					imageFormat = HipiImageFormat.fromInteger(imageFormatInt);
 				} catch (IllegalArgumentException e) {
+					System.err.println(" IllegalArgumentException report corrupted HIB " );
+					e.printStackTrace();
 					// TODO Work around to skip images malformed
 					return true;
 					// TODO remove next commented line
@@ -271,7 +276,10 @@ public class HipiImageBundle {
 					// in HIB at offset: " + currentOffset);
 				}
 				if (imageFormat == HipiImageFormat.UNDEFINED) {
-					throw new IOException("Found UNDEFINED image storage format in HIB at offset: " + currentOffset);
+					// TODO Work around to skip images malformed
+					return true;
+					// TODO remove next commented line
+//					throw new IOException("Found UNDEFINED image storage format in HIB at offset: " + currentOffset);
 				}
 
 				/*
