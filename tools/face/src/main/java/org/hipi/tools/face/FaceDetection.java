@@ -55,6 +55,7 @@ public class FaceDetection extends Configured implements Tool {
 		if (line.hasOption("f")) {
 			overwrite = true;
 		}
+		args = line.getArgs();
 
 		// Initialize and configure MapReduce job
 		Job job = Job.getInstance();
