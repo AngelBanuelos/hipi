@@ -70,7 +70,7 @@ public class FaceRecognitionSingle {
 	}
 
 	private void configFRG(String name) {
-		//Test
+		// Test
 		switch (recognizerMethod) {
 		case 1:
 			System.out.println("opencv_face.createLBPHFaceRecognizer()");
@@ -107,12 +107,14 @@ public class FaceRecognitionSingle {
 
 		int count = 0;
 		List<ImageContainer> imageContainerList = new ArrayList<>();
-		
+
 		while (hib.next()) {
 			try {
-				ImageContainer img = new ImageContainer(hib.currentHeader(), (FloatImage) hib.currentImage());
-				imageContainerList.add(img);
-				count++;
+				if (hib != null) {
+					ImageContainer img = new ImageContainer(hib.currentHeader(), (FloatImage) hib.currentImage());
+					imageContainerList.add(img);
+					count++;
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -156,21 +158,20 @@ public class FaceRecognitionSingle {
 		}
 	}
 
-//	public int predict(RasterImage floatImage) {
-//		Mat testImage = null;
-//		FaceUtils.convertFloatImageToGrayscaleMat(floatImage, testImage);
-//		int predictedLabel = faceRecognizer.predict(testImage);
-//		return predictedLabel;
-//	}
-//
-//	public int predict(Mat image) {
-//		// Mat imageRGB = image;
-//		// opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
-//		int predictedLabel = faceRecognizer.predict(image);
-//		return predictedLabel;
-//	}
-	
-	
+	// public int predict(RasterImage floatImage) {
+	// Mat testImage = null;
+	// FaceUtils.convertFloatImageToGrayscaleMat(floatImage, testImage);
+	// int predictedLabel = faceRecognizer.predict(testImage);
+	// return predictedLabel;
+	// }
+	//
+	// public int predict(Mat image) {
+	// // Mat imageRGB = image;
+	// // opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
+	// int predictedLabel = faceRecognizer.predict(image);
+	// return predictedLabel;
+	// }
+
 	public int predict(RasterImage floatImage) {
 		Mat testImage = null;
 		FaceUtils.convertFloatImageToGrayscaleMat(floatImage, testImage);

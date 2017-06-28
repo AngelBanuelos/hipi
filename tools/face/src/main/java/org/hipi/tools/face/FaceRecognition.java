@@ -2,7 +2,15 @@ package org.hipi.tools.face;
 
 import java.net.URI;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -14,9 +22,44 @@ import org.hipi.imagebundle.mapreduce.HibInputFormat;
 
 public class FaceRecognition extends Configured implements Tool {
 
+	private static final Options options = new Options();
+	private static final Parser parser = (Parser) new BasicParser();
+
+	static {
+		options.addOption("f", "force-method", false, " force training ");
+		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS and is a Hib file");
+		options.addOption("m", "recognition-method", true,
+				"LBPHFaceRecognizer = 1, FisherFaceRecognizer = 2," + " EigenFaceRecognizer = 3 ");
+	}
+
+	private static void usage() {
+		// usage
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("face.jar [options] <image directory HIB> <image(s) to predict>", options);
+
+		System.exit(0);
+	}
+
 	@Override
 	public int run(String[] args) throws Exception {
-		
+
+		CommandLine line = null;
+		String action = null;
+
+		try {
+			line = parser.parse(options, args);
+		} catch (ParseException exp) {
+			usage();
+		}
+		if (line == null || line.getArgs() == null || line.getArgs().length != 3) {
+			usage();
+		}
+		boolean overwrite = false;
+		if (line.hasOption("f")) {
+			overwrite = true;
+		}
+		args = line.getArgs();
+
 		// Initialize and configure MapReduce job
 		Job job = Job.getInstance();
 		// Set input format class which parses the input HIB and spawns map
@@ -38,6 +81,13 @@ public class FaceRecognition extends Configured implements Tool {
 		// Adding the HAAR-LIKE trained neural red.
 		job.addCacheFile(new URI(args[0]));
 
+		if (overwrite) {
+			// configuration should contain reference to your namenode
+			FileSystem fs = FileSystem.get(new Configuration());
+			// true stands for recursively deleting the folder you gave
+			fs.delete(new Path(args[2]), true);
+		}
+		
 		// Set the input and output paths on the HDFS
 		FileInputFormat.setInputPaths(job, new Path(args[1]));
 		FileOutputFormat.setOutputPath(job, new Path(args[2]));
