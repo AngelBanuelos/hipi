@@ -9,9 +9,11 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -23,11 +25,21 @@ public class FaceDetection extends Configured implements Tool {
 
 	private static final Options options = new Options();
 	private static final Parser parser = (Parser) new BasicParser();
-	
+
+	static {
+		options.addOption("f", "force", false, "force overwrite if output HIB already exists");
+		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS");
+		options.addOption("a", "action", true, "faceDetection FD, FaceRecognition FR, its a Must");
+		options.addOption("m", "recognition-method", true,
+				"LBPHFaceRecognizer = 1, FisherFaceRecognizer = 2," + " EigenFaceRecognizer = 3 ");
+		options.addOption("mp", "image-limit-percentage", true,
+				"Maximun number of images to be load per folder by percentage");
+	}
+
 	public int run(String[] args) throws Exception {
-	
+
 		// Check input arguments
-		
+
 		CommandLine line = null;
 		String action = null;
 
@@ -38,6 +50,10 @@ public class FaceDetection extends Configured implements Tool {
 		}
 		if (line == null || line.getArgs() == null || line.getArgs().length != 3) {
 			usage();
+		}
+		boolean overwrite = false;
+		if (line.hasOption("f")) {
+			overwrite = true;
 		}
 
 		// Initialize and configure MapReduce job
@@ -54,20 +70,27 @@ public class FaceDetection extends Configured implements Tool {
 		// layers
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(IntWritable.class);
-		
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-		
-		//Adding the HAAR-LIKE trained neural red.
+
+		// Adding the HAAR-LIKE trained neural red.
 		job.addCacheFile(new URI(args[0]));
+
+		if (overwrite) {
+			// configuration should contain reference to your namenode
+			FileSystem fs = FileSystem.get(new Configuration());
+			// true stands for recursively deleting the folder you gave
+			fs.delete(new Path(args[2]), true);
+		}
 		
 		// Set the input and output paths on the HDFS
 		FileInputFormat.setInputPaths(job, new Path(args[1]));
 		FileOutputFormat.setOutputPath(job, new Path(args[2]));
 
-		//Create just one reduce task
+		// Create just one reduce task
 		job.setNumReduceTasks(1);
-		
+
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);
 
