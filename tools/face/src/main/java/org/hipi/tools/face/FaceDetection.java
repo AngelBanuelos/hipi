@@ -4,6 +4,11 @@ import org.hipi.imagebundle.mapreduce.HibInputFormat;
 
 import java.net.URI;
 
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -16,12 +21,23 @@ import org.apache.hadoop.mapreduce.Job;
 
 public class FaceDetection extends Configured implements Tool {
 
+	private static final Options options = new Options();
+	private static final Parser parser = (Parser) new BasicParser();
+	
 	public int run(String[] args) throws Exception {
 	
 		// Check input arguments
-		if (args.length != 3) {
-			System.out.println("Usage: FaceDetection <HAAR-LIKE cascade xml> <input HIB> <output directory>");
-			System.exit(0);
+		
+		CommandLine line = null;
+		String action = null;
+
+		try {
+			line = parser.parse(options, args);
+		} catch (ParseException exp) {
+			usage();
+		}
+		if (line == null || line.getArgs() == null || line.getArgs().length != 3) {
+			usage();
 		}
 
 		// Initialize and configure MapReduce job
@@ -57,6 +73,11 @@ public class FaceDetection extends Configured implements Tool {
 
 		// Return success or failure
 		return success ? 0 : 1;
+	}
+
+	private void usage() {
+		System.out.println("Usage: FaceDetection <HAAR-LIKE cascade xml> <input HIB> <output directory>");
+		System.exit(0);
 	}
 
 	public static void main(String[] args) throws Exception {
