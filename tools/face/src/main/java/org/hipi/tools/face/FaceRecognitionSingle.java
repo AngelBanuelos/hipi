@@ -2,6 +2,7 @@ package org.hipi.tools.face;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,8 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_face;
 import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
@@ -217,6 +220,19 @@ public class FaceRecognitionSingle {
 		int predictedLabel = faceRecognizer.predict_label(image);
 		return predictedLabel;
 	}
+	
+	public int predict2(Mat image) {
+		// Mat imageRGB = image;
+		// opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
+//		int predictedLabel = faceRecognizer.predict_label(image);
+		IntPointer intP = new IntPointer();
+		intP.put(-1);
+		DoublePointer confidence = new DoublePointer();
+		confidence.put(0.0);
+		faceRecognizer.predict(image, intP, confidence);
+		int predictedLabel = intP.get();
+		return predictedLabel;
+	}
 
 	class ImageContainer {
 		private HipiImageHeader header;
@@ -301,7 +317,9 @@ public class FaceRecognitionSingle {
 			// Prediction
 			System.out.println("Predicting ");
 			Mat testImage = opencv_imgcodecs.imread(testingDirOrImage, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
-			int predict = faceRecognitionMaper.predict(testImage);
+//			int predict = faceRecognitionMaper.predict(testImage);
+			int predict = faceRecognitionMaper.predict2(testImage);
+			
 			System.out.println("Prediected " + predict);
 
 		} catch (IOException e) {
