@@ -160,7 +160,7 @@ public class FaceRecognitionSingle {
 		}
 		if(!mapping.isEmpty())
 		for (String key: mapping.keySet()) {
-			System.out.println(mapping.get(key));
+			System.out.println(key + " .. " + mapping.get(key));
 		}
 		
 		System.out.println("\nload finish");
