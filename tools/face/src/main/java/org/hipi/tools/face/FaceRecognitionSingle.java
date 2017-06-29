@@ -220,12 +220,16 @@ public class FaceRecognitionSingle {
 		try {
 			line = parser.parse(options, args);
 		} catch (ParseException exp) {
+			exp.printStackTrace();
 			usage();
 		}
+		System.out.println("line  " + line);
 		if (line == null) {
 			usage();
 		}
 
+		System.out.println("Args " + line.getArgs());
+		
 		String[] leftArgs = line.getArgs();
 		if (leftArgs.length != 2) {
 			usage();
