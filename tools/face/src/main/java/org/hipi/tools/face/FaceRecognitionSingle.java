@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.MatVector;
@@ -130,12 +133,24 @@ public class FaceRecognitionSingle {
 
 		int counter = 0;
 		System.out.println("Loading images and labels");
+		HashMap<String , Integer> mapping = new HashMap<>();
+		int newLabel = 0 ;
 		for (ImageContainer imageContainer : imageContainerList) {
 
 			Mat img = new Mat(imageContainer.image.getHeight(), imageContainer.image.getWidth(), opencv_core.CV_32FC1);
 
 			FaceUtils.convertFloatImageToGrayscaleMat(imageContainer.image, img);
-			int label = Integer.parseInt(imageContainer.header.getMetaData("filename").split("\\-")[0]);
+			int aux = 0;
+			if (isNumeric(imageContainer.header.getMetaData("filename").split("\\-")[0])) {
+				aux = Integer.parseInt(imageContainer.header.getMetaData("filename").split("\\-")[0]);
+			} else {
+				if(mapping.containsKey(imageContainer.header.getMetaData("filename").split("\\-")[0])) {
+					aux = mapping.get(imageContainer.header.getMetaData("filename").split("\\-")[0]);
+				} else {
+					mapping.put(imageContainer.header.getMetaData("filename").split("\\-")[0], newLabel++);
+				}
+			}
+			int label = aux;
 
 			images.put(counter, img);
 			labelsBuf.put(counter, label);
@@ -143,6 +158,11 @@ public class FaceRecognitionSingle {
 			counter++;
 			System.out.print("Image num: " + counter + "\r");
 		}
+		if(!mapping.isEmpty())
+		for (String key: mapping.keySet()) {
+			System.out.println(mapping.get(key));
+		}
+		
 		System.out.println("\nload finish");
 		try {
 
@@ -174,6 +194,15 @@ public class FaceRecognitionSingle {
 	// int predictedLabel = faceRecognizer.predict(image);
 	// return predictedLabel;
 	// }
+
+	private boolean isNumeric(String string) {
+		for (char ch : string.toCharArray()) {
+			if (!Character.isDigit(ch)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	public int predict(RasterImage floatImage) {
 		Mat testImage = null;
