@@ -132,7 +132,7 @@ public class HibImport {
 
 				HashMap<String, String> metaData = new HashMap<String, String>();
 				metaData.put("source", source);
-				String fileName = file.getPath().getName().toLowerCase();
+				String fileName = file.getPath().getName();
 
 				if (file.isDirectory()) {
 					FileStatus[] files2 = fs.listStatus(new Path(imageDir + "/" + fileName + "/"));
@@ -156,7 +156,7 @@ public class HibImport {
 						metaData2.put("source", source);
 
 						FSDataInputStream fdis2 = fs.open(file2.getPath());
-						String fileName2 = file2.getPath().getName().toLowerCase();
+						String fileName2 = file2.getPath().getName();
 
 						String suffix = fileName2.substring(fileName2.lastIndexOf('.'));
 						metaData2.put("filename", fileName + "-" + "RCG_" + fileName2);
@@ -209,7 +209,7 @@ public class HibImport {
 				String localPath = file.getPath();
 				HashMap<String, String> metaData = new HashMap<String, String>();
 				metaData.put("source", localPath);
-				String fileName = file.getName().toLowerCase();
+				String fileName = file.getName();
 				metaData.put("filename", fileName);
 				String suffix = fileName.substring(fileName.lastIndexOf('.'));
 				if (suffix.compareTo(".jpg") == 0 || suffix.compareTo(".jpeg") == 0) {
