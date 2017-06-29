@@ -51,7 +51,7 @@ public class FaceRecognition extends Configured implements Tool {
 		} catch (ParseException exp) {
 			usage();
 		}
-		if (line == null || line.getArgs() == null || line.getArgs().length != 3) {
+		if (line == null || line.getArgs() == null || line.getArgs().length != 2) {
 			usage();
 		}
 		boolean overwrite = false;
