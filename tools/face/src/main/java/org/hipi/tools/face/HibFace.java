@@ -54,7 +54,7 @@ public class HibFace extends Configured {
 		} else if (action != null && action.equalsIgnoreCase("FR")) {
 			ToolRunner.run(new FaceRecognition(), args);
 		} else if (action != null && action.equalsIgnoreCase("NonFR")) {
-			FaceDetectionSingle.main(args);
+			FaceRecognitionSingle.main(args);
 		} else {
 			usage();
 		}
