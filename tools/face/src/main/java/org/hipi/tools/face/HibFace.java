@@ -17,7 +17,7 @@ public class HibFace extends Configured {
 	static {
 		options.addOption("f", "force", false, "force overwrite if output HIB already exists");
 		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS");
-		options.addOption("a", "action", true, "faceDetection FD, FaceRecognition FR, its a Must");
+		options.addOption("a", "action", true, "faceDetection FD, FaceRecognition FR, FaceRecognitionSingle thread NonFR,  its a Must");
 		options.addOption("m", "recognition-method", true,
 				"LBPHFaceRecognizer = 1, FisherFaceRecognizer = 2," + " EigenFaceRecognizer = 3 ");
 		options.addOption("mp", "image-limit-percentage", true,
@@ -53,6 +53,8 @@ public class HibFace extends Configured {
 			ToolRunner.run(new FaceDetection(), args);
 		} else if (action != null && action.equalsIgnoreCase("FR")) {
 			ToolRunner.run(new FaceRecognition(), args);
+		} else if (action != null && action.equalsIgnoreCase("NonFR")) {
+			FaceDetectionSingle.main(args);
 		} else {
 			usage();
 		}
