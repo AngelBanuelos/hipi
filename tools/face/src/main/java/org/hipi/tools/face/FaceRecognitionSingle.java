@@ -226,9 +226,8 @@ public class FaceRecognitionSingle {
 		// opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
 //		int predictedLabel = faceRecognizer.predict_label(image);
 		IntPointer intP = new IntPointer();
-		intP.put(-1);
 		DoublePointer confidence = new DoublePointer();
-		confidence.put(0.0);
+		
 		faceRecognizer.predict(image, intP, confidence);
 		int predictedLabel = intP.get();
 		return predictedLabel;
