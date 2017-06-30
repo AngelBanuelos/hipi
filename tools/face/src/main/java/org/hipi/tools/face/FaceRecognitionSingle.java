@@ -41,6 +41,7 @@ public class FaceRecognitionSingle {
 	private static String saveLocation = "";
 	private static boolean faceRecognizerLoaded = false;
 	private static boolean forceTrainig = false;
+	
 	static {
 		options.addOption("f", "force", false, "force overwrite if output HIB already exists");
 		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS");
@@ -55,7 +56,6 @@ public class FaceRecognitionSingle {
 		// usage
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("face.jar [options] <image directory HIB> <image(s) to predict>", options);
-
 		System.exit(0);
 	}
 
