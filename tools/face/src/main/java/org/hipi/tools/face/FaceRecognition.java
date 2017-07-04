@@ -94,7 +94,7 @@ public class FaceRecognition extends Configured implements Tool {
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 		// Create just one reduce task
-		job.setNumReduceTasks(1);
+//		job.setNumReduceTasks(1);
 
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);
