@@ -15,14 +15,17 @@ import org.hipi.tools.face.FaceRecognitionSingle.ImageContainer;
 public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, Text, OpenCVMatWritable> {
 
 	public void map(HipiImageHeader key, FloatImage image, Context context) throws IOException, InterruptedException {
-
-		
-		Mat faceRecognition = new Mat(image.getHeight(), image.getWidth(), opencv_core.CV_32FC1);
-		FaceUtils.convertFloatImageToGrayscaleMat(image, faceRecognition);
+		Mat faceRecognition = null;
+		if (image != null) {
+			faceRecognition = new Mat(image.getHeight(), image.getWidth(), opencv_core.CV_32FC1);
+			FaceUtils.convertFloatImageToGrayscaleMat(image, faceRecognition);
+		}
 		Text fileName = new Text(key.getMetaData("filename").split("\\-")[0]);
-//		ImageContainer img = new ImageContainer(key, image);
-		
-//		context.write(fileName, new OpenCVMatWritable(faceRecognition));
+		// ImageContainer img = new ImageContainer(key, image);
+		if (faceRecognition == null) {
+			System.err.println(" fileName error: " + fileName);
+			faceRecognition = new Mat();
+		}
 		context.write(fileName, new OpenCVMatWritable(faceRecognition));
 	}
 }
