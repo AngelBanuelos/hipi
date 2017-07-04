@@ -27,10 +27,13 @@ public class FaceRecognition extends Configured implements Tool {
 	private static final Parser parser = (Parser) new BasicParser();
 
 	static {
-		options.addOption("f", "force-method", false, " force training ");
-		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS and is a Hib file");
+		options.addOption("f", "force", false, "force overwrite if output HIB already exists");
+		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS");
+		options.addOption("a", "action", true, "faceDetection FD, FaceRecognition FR, FaceRecognitionSingle thread NonFR,  its a Must");
 		options.addOption("m", "recognition-method", true,
 				"LBPHFaceRecognizer = 1, FisherFaceRecognizer = 2," + " EigenFaceRecognizer = 3 ");
+		options.addOption("mp", "image-limit-percentage", true,
+				"Maximun number of images to be load per folder by percentage");
 	}
 
 	private static void usage() {
