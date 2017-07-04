@@ -22,7 +22,8 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Tex
 		for (OpenCVMatWritable value : values) {
 			totalImagesPerFace++;
 		}
-		result.set("Images found for " + key + "_" + id++ +" are :  " + totalImagesPerFace);
+		key = new Text(key + "_" + id++);
+		result.set("Images found for " + key +" are :  " + totalImagesPerFace);
 		//Saving the value in the given HDFS directory.
 		context.write(key, result);
 		
