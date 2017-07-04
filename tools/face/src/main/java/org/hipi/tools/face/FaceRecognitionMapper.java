@@ -12,7 +12,7 @@ import org.hipi.image.HipiImageHeader;
 import org.hipi.opencv.OpenCVMatWritable;
 import org.hipi.tools.face.FaceRecognitionSingle.ImageContainer;
 
-public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, Text, IntWritable> {
+public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, Text, OpenCVMatWritable> {
 
 	public void map(HipiImageHeader key, FloatImage image, Context context) throws IOException, InterruptedException {
 
@@ -23,6 +23,6 @@ public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, T
 //		ImageContainer img = new ImageContainer(key, image);
 		
 //		context.write(fileName, new OpenCVMatWritable(faceRecognition));
-		context.write(fileName, new IntWritable(1));
+		context.write(fileName, new OpenCVMatWritable(faceRecognition));
 	}
 }

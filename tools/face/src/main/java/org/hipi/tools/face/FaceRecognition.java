@@ -77,9 +77,7 @@ public class FaceRecognition extends Configured implements Tool {
 		// Set the types for the key/value pairs passed to/from map and reduce
 		// layers
 		job.setMapOutputKeyClass(Text.class);
-//		TODO uncomment this
-		job.setMapOutputValueClass(IntWritable.class);
-//		job.setMapOutputValueClass(OpenCVMatWritable.class);
+		job.setMapOutputValueClass(OpenCVMatWritable.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);

@@ -6,21 +6,20 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
+import org.hipi.opencv.OpenCVMatWritable;
 
-public class FaceRecognitionReducer extends Reducer<Text, IntWritable, Text, Text> {
+public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Text, Text> {
 	private Text result = new Text();
 	private Text folder = new Text();
 
 	@Override
-	public void reduce(Text key, Iterable<IntWritable> values, Context context)
+	public void reduce(Text key, Iterable<OpenCVMatWritable> values, Context context)
 			throws IOException, InterruptedException {
 		
 		int totalImagesPerFace = 0;
-		int size = 0;
 		//Grouping each key and counting all the occurrences.
-		for (IntWritable value : values) {
-			totalImagesPerFace += value.get();
-			size++;
+		for (OpenCVMatWritable value : values) {
+			totalImagesPerFace++;
 		}
 		result.set("Images found for " + key + " are :  " + totalImagesPerFace);
 		//Saving the value in the given HDFS directory.
