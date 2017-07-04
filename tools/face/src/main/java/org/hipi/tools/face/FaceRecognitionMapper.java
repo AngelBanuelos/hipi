@@ -20,11 +20,15 @@ public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, T
 			faceRecognition = new Mat(image.getHeight(), image.getWidth(), opencv_core.CV_32FC1);
 			FaceUtils.convertFloatImageToGrayscaleMat(image, faceRecognition);
 		}
-		Text fileName = new Text(key.getMetaData("filename").split("\\-")[0]);
+		Text fileName = null;
+		if (key != null)
+			fileName = new Text(key.getMetaData("filename").split("\\-")[0]);
 		// ImageContainer img = new ImageContainer(key, image);
 		if (faceRecognition == null) {
-			System.err.println(" fileName error: " + fileName);
 			faceRecognition = new Mat();
+		}
+		if (fileName == null) {
+			fileName = new Text("Null image :(");
 		}
 		context.write(fileName, new OpenCVMatWritable(faceRecognition));
 	}
