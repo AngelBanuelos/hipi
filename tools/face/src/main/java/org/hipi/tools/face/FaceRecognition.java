@@ -12,17 +12,15 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.Tool;
 import org.hipi.imagebundle.mapreduce.HibInputFormat;
 import org.hipi.opencv.OpenCVMatWritable;
 
-public class FaceRecognition extends Configured implements Tool {
+public class FaceRecognition {
 
 	private static final Options options = new Options();
 	private static final Parser parser = (Parser) new BasicParser();
@@ -45,11 +43,11 @@ public class FaceRecognition extends Configured implements Tool {
 		System.exit(0);
 	}
 
-	@Override
-	public int run(String[] args) throws Exception {
+	public static int run(String[] args) throws Exception {
 
 		CommandLine line = null;
 		String action = null;
+		
 
 		try {
 			line = parser.parse(options, args);
@@ -64,7 +62,8 @@ public class FaceRecognition extends Configured implements Tool {
 			overwrite = true;
 		}
 		args = line.getArgs();
-
+		String outputPeopleListDir = args[1] + "/people-output/";
+		
 		// Initialize and configure MapReduce job
 		Job job = Job.getInstance();
 		// Set input format class which parses the input HIB and spawns map
@@ -92,11 +91,13 @@ public class FaceRecognition extends Configured implements Tool {
 		
 		// Set the input and output paths on the HDFS
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		FileOutputFormat.setOutputPath(job, new Path(outputPeopleListDir));
 
 		// Create just one reduce task
 //		job.setNumReduceTasks(1);
 
+		job.getConfiguration().setStrings("hipi.people.face.recognition.path", outputPeopleListDir);
+		
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);
 
