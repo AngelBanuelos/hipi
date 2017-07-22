@@ -30,6 +30,12 @@ public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, T
 		if (fileName == null) {
 			fileName = new Text("Null image :(");
 		}
+		int dims = faceRecognition.dims();
+		if (!(dims == 1 || dims == 2)) {
+			System.out.println(fileName +  "Currently supports only 1D or 2D arrays. " + "Input mat dims: " + dims);
+			return;
+		}
+
 		context.write(fileName, new OpenCVMatWritable(faceRecognition));
 	}
 }
