@@ -88,9 +88,13 @@ public class FaceRecognition {
 			FileSystem fs = FileSystem.get(new Configuration());
 			// true stands for recursively deleting the folder you gave
 			fs.delete(new Path(args[1]), true);
+			
 		} else {
-			job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
-			return 0;
+			FileSystem fs = FileSystem.get(new Configuration());
+			if(fs.exists(new Path(peopleMapInput))){
+				job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
+				return 0;
+			}
 		}
 
 		// Set the input and output paths on the HDFS
