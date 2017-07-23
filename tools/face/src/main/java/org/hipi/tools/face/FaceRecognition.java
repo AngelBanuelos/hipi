@@ -29,7 +29,8 @@ public class FaceRecognition {
 	static {
 		options.addOption("f", "force", false, "force overwrite if output HIB already exists");
 		options.addOption("h", "hdfs-input", false, "assume input directory is on HDFS");
-		options.addOption("a", "action", true, "faceDetection FD, FaceRecognition FR, FaceRecognitionSingle thread NonFR,  its a Must");
+		options.addOption("a", "action", true,
+				"faceDetection FD, FaceRecognition FR, FaceRecognitionSingle thread NonFR,  its a Must");
 		options.addOption("m", "recognition-method", true,
 				"LBPHFaceRecognizer = 1, FisherFaceRecognizer = 2," + " EigenFaceRecognizer = 3 ");
 		options.addOption("mp", "image-limit-percentage", true,
@@ -63,9 +64,9 @@ public class FaceRecognition {
 		}
 		args = line.getArgs();
 		String outputPeopleListDir = args[1] + "/people-output/";
-		
+		String peopleMapInput = outputPeopleListDir + File.separator + "part-r-00000";
 		// Initialize and configure MapReduce job
-		
+
 		// Set input format class which parses the input HIB and spawns map
 		// tasks
 		job.setInputFormatClass(HibInputFormat.class);
@@ -87,17 +88,20 @@ public class FaceRecognition {
 			FileSystem fs = FileSystem.get(new Configuration());
 			// true stands for recursively deleting the folder you gave
 			fs.delete(new Path(args[1]), true);
+		} else {
+			job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
+			return 0;
 		}
-		
+
 		// Set the input and output paths on the HDFS
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(outputPeopleListDir));
 
 		// Create just one reduce task
-//		job.setNumReduceTasks(1);
-		String peopleMapInput = outputPeopleListDir + File.separator + "part-r-00000";
+		// job.setNumReduceTasks(1);
+
 		job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
-		
+
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);
 
