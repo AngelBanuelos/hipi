@@ -21,6 +21,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.ArrayWritable;
+import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -79,8 +80,9 @@ public class FaceRecognitionTraining {
 
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
-			System.out.println(peopleListPath + " : " + dis.available());
-			
+			System.out.println(peopleListPath + " available: " + dis.available());
+			System.out.println(peopleListPath + " readInt: " + dis.readInt());
+//			System.out.println(peopleListPath + " readInt: " + getClass(dis.readByte()));
 			
             BufferedReader br = new BufferedReader(new InputStreamReader(dis));
             String line;
@@ -93,7 +95,6 @@ public class FaceRecognitionTraining {
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
 			hashMapPeople.readFields(dis);
-			
 			dis.close();
 			
 			int count = 0;
