@@ -1,5 +1,7 @@
 package org.hipi.tools.face;
 
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.File;
 import java.nio.IntBuffer;
 import java.util.Map.Entry;
@@ -75,7 +77,12 @@ public class FaceRecognitionTraining {
 
 			// Populate mat with mean data
 			MapWritable hashMapPeople = new MapWritable();
-			hashMapPeople.readFields(dis);
+			
+			byte[] b = new byte[1024];
+			if( ((DataInputStream) dis).read(b) != -1){ 
+				hashMapPeople.readFields(dis);
+			}
+			
 			int count = 0;
 
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
@@ -119,10 +126,14 @@ public class FaceRecognitionTraining {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if(images == null || labels == null) {
+			return 1;
+		}
 		
 		String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
 		configFRG(fileName);
 
+		
 		System.out.println("training");
 		faceRecognizer.train(images, labels);
 		System.out.println("trained");
