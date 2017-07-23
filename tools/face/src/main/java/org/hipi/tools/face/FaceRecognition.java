@@ -81,7 +81,7 @@ public class FaceRecognition {
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(OpenCVMatWritable.class);
 
-	    job.setOutputKeyClass(NullWritable.class);
+	    job.setOutputKeyClass(MapWritable.class);
 	    job.setOutputValueClass(MapWritable.class);
 
 		if (overwrite) {
