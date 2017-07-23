@@ -83,7 +83,7 @@ public class FaceRecognitionTraining {
 			Path peopleListPath = new Path(peopleListDir);
 			byte[] bytes = FileUtils.readFileToByteArray(new File("/tmp/test8/people-output/AngelSerialized"));
 			AngelSerialized ag = (AngelSerialized)SerializationUtils.deserialize(bytes);
-			System.out.println(ag.getKey().toString() + " () " + ag.getValue().toString());
+			System.out.println(ag.getKey() + " () " + ag.getValue());
 			
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " available: " + dis.available());

@@ -50,19 +50,19 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 		 */
 		private static final long serialVersionUID = 1L;
 		
-		Text key;
-		Text value;
+		String key;
+		String value;
 		
 		protected AngelSerialized (String key, String value){
-			this.key = new Text(key);
-			this.value = new Text(value);
+			this.key = new String(key);
+			this.value = new String(value);
 		}
 		
-		public Text getKey() {
+		public String getKey() {
 			return key;
 		}
 		
-		public Text getValue() {
+		public String getValue() {
 			return value;
 		}
 		
