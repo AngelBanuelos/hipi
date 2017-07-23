@@ -31,6 +31,11 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 		for (OpenCVMatWritable value : values) {
 			totalImagesPerFace++;
 		}
+		
+		if(totalImagesPerFace == 0) {
+			System.err.println("No images for people " + key.toString());
+			return;
+		}
 
 		ArrayWritable peopleImages = new ArrayWritable(OpenCVMatWritable.class);
 		key = new Text(key + "_" + id++);

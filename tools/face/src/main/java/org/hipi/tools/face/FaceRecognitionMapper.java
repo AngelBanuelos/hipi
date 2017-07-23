@@ -15,27 +15,27 @@ import org.hipi.tools.face.FaceRecognitionSingle.ImageContainer;
 public class FaceRecognitionMapper extends Mapper<HipiImageHeader, FloatImage, Text, OpenCVMatWritable> {
 
 	public void map(HipiImageHeader key, FloatImage image, Context context) throws IOException, InterruptedException {
-		Mat faceRecognition = null;
+		Mat grayScaleMat = null;
 		if (image != null) {
-			faceRecognition = new Mat(image.getHeight(), image.getWidth(), opencv_core.CV_32FC1);
-			FaceUtils.convertFloatImageToGrayscaleMat(image, faceRecognition);
+			grayScaleMat = new Mat(image.getHeight(), image.getWidth(), opencv_core.CV_32FC1);
+			FaceUtils.convertFloatImageToGrayscaleMat(image, grayScaleMat);
 		}
 		Text fileName = null;
 		if (key != null)
 			fileName = new Text(key.getMetaData("filename").split("\\-")[0]);
 		// ImageContainer img = new ImageContainer(key, image);
-		if (faceRecognition == null) {
-			faceRecognition = new Mat();
+		if (grayScaleMat == null) {
+			grayScaleMat = new Mat();
 		}
 		if (fileName == null) {
 			fileName = new Text("Null image :(");
 		}
-		int dims = faceRecognition.dims();
+		int dims = grayScaleMat.dims();
 		if (!(dims == 1 || dims == 2)) {
 			System.out.println(fileName +  "Currently supports only 1D or 2D arrays. " + "Input mat dims: " + dims);
 			return;
 		}
 
-		context.write(fileName, new OpenCVMatWritable(faceRecognition));
+		context.write(fileName, new OpenCVMatWritable(grayScaleMat));
 	}
 }
