@@ -81,9 +81,11 @@ public class FaceRecognitionTraining {
 			
 			Text testing = new Text();
 			testing.readFields(dis);
+			testing.readFields(dis);
+			testing.readFields(dis);
 			Thread.sleep(5000);
 			System.out.println("Text: " + testing.toString());
-			
+			Thread.sleep(5000);
 			
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
