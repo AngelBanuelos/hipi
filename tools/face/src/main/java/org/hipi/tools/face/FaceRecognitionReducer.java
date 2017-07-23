@@ -42,6 +42,7 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 			counter++;
 			System.out.println("Count  " + counter);
 		}
+		System.out.println("Total Images   " + counter);
 		peopleImages.set(imageArray);
 		peopleMap.put(key, peopleImages);
 		FileUtils.writeByteArrayToFile(new File("/tmp/test8/people-output/AngelSerialized"),
