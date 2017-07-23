@@ -156,8 +156,8 @@ public class FaceRecognitionTraining {
 		if (leftArgs.length != 2) {
 			usage();
 		}
-		inputPath = args[0];
-//		outputPath = args[1];
+		inputPath = leftArgs[0];
+//		outputPath = leftArgs[1];
 
 		if (line.hasOption("h")) {
 			hdfsInput = true;
