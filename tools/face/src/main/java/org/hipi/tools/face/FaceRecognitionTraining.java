@@ -80,8 +80,9 @@ public class FaceRecognitionTraining {
 
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
-//			System.out.println(peopleListPath + " available: " + dis.available());
+			System.out.println(peopleListPath + " available: " + dis.available());
 //			System.out.println(peopleListPath + " readInt: " + dis.readInt());
+			System.out.println(peopleListPath + " className: " + dis.readUTF());
 ////			System.out.println(peopleListPath + " readInt: " + getClass(dis.readByte()));
 //			
 //            BufferedReader br = new BufferedReader(new InputStreamReader(dis));
