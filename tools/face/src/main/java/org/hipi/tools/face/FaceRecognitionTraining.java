@@ -82,7 +82,7 @@ public class FaceRecognitionTraining {
 
 			Path peopleListPath = new Path(peopleListDir);
 			byte[] bytes = FileUtils.readFileToByteArray(new File("/tmp/test8/people-output/AngelSerialized"));
-			AngelSerialized ag = (AngelSerialized)SerializationUtils.deserialize(bytes);
+			AngelSerialized ag = (AngelSerialized) SerializationUtils.deserialize(bytes);
 			System.out.println(ag.getKey() + " () " + ag.getValue());
 			
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
@@ -136,7 +136,8 @@ public class FaceRecognitionTraining {
 
 			images = imagesTemp;
 			labels = labelsTemp;
-
+			imagesTemp.close();
+			labelsTemp.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
