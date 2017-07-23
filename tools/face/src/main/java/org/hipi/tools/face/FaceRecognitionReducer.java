@@ -3,6 +3,7 @@ package org.hipi.tools.face;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SerializationUtils;
@@ -26,10 +27,12 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 	public void reduce(Text key, Iterable<OpenCVMatWritable> values, Context context)
 			throws IOException, InterruptedException {
 
+		ArrayList<OpenCVMatWritable> images = new ArrayList<>();
 		int totalImagesPerFace = 0;
 		// Grouping each key and counting all the occurrences.
 		for (OpenCVMatWritable value : values) {
 			totalImagesPerFace++;
+			images.add(value);
 		}
 		
 		if(totalImagesPerFace == 0) {
@@ -42,7 +45,7 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 
 		int counter = 0;
 		OpenCVMatWritable[] imageArray = new OpenCVMatWritable[totalImagesPerFace];
-		for (OpenCVMatWritable value : values) {
+		for (OpenCVMatWritable value : images) {
 			imageArray[counter] = new OpenCVMatWritable(value.getMat());
 			counter++;
 			System.out.println("Count  " + counter);
