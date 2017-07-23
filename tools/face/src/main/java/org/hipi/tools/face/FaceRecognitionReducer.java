@@ -38,15 +38,16 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 		int counter = 0;
 		OpenCVMatWritable[] imageArray = new OpenCVMatWritable[totalImagesPerFace];
 		for (OpenCVMatWritable value : values) {
-			imageArray[counter] = value;
+			imageArray[counter] = new OpenCVMatWritable(value.getMat());
 			counter++;
+			System.out.println("Count  " + counter);
 		}
 		peopleImages.set(imageArray);
 		peopleMap.put(key, peopleImages);
 		FileUtils.writeByteArrayToFile(new File("/tmp/test8/people-output/AngelSerialized"),
 				SerializationUtils.serialize(new AngelSerialized("Angel_Key", "Angel_Value")));
 		if (!FileSystem.get(new Configuration()).exists(new Path("/tmp/test8/people-output/AngelSerialized"))) {
-			peopleMap.write(
+			peopleMap.write(	
 					FileSystem.get(new Configuration()).create(new Path("/tmp/test8/people-output/AngelSerialized")));
 		} else {
 			peopleMap.write(
