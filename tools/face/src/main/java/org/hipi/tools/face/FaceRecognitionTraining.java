@@ -72,8 +72,6 @@ public class FaceRecognitionTraining {
 	public static int run(String args[], Configuration conf) {
 
 		String peopleListDir = conf.get("hipi.people.face.recognition.path");
-		MatVector images = null;
-		Mat labels = null;
 		try {
 			// Access people hashmap data on HDFS
 			if (peopleListDir == null) {
@@ -114,6 +112,7 @@ public class FaceRecognitionTraining {
 						count += imagesArray.get().length;
 				}
 			}
+			System.out.println(" Total Images: " + count);
 
 			MatVector imagesTemp = new MatVector(count);
 			Mat labelsTemp = new Mat(count, 1, opencv_core.CV_32SC1);
@@ -124,7 +123,7 @@ public class FaceRecognitionTraining {
 				Text key = (Text) entrySet.getKey();
 				String keyS = key.toString();
 				int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_") + 1));
-
+				System.out.println("Name: " + keyS +  " label: " + label);
 				ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
 
 				for (Writable img : imagesArray.get()) {
@@ -136,37 +135,36 @@ public class FaceRecognitionTraining {
 				}
 			}
 
-			images = imagesTemp;
-			labels = labelsTemp;
-			imagesTemp.close();
-			labelsTemp.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			
+			try {
+				config(args);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (imagesTemp == null || labelsTemp == null) {
+				return 1;
+			}
 
-		try {
-			config(args);
+			String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
+			configFRG(fileName);
+
+			System.out.println("training");
+			faceRecognizer.train(imagesTemp, labelsTemp);
+			System.out.println("trained");
+
+			System.out.println("saving training");
+			faceRecognizer.save(saveLocation);
+
+			System.out.println(saveLocation);
+
+			// success
+			return 0;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		if (images == null || labels == null) {
 			return 1;
 		}
-
-		String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
-		configFRG(fileName);
-
-		System.out.println("training");
-		faceRecognizer.train(images, labels);
-		System.out.println("trained");
-
-		System.out.println("saving training");
-		faceRecognizer.save(saveLocation);
-
-		System.out.println(saveLocation);
-
-		// success
-		return 0;
+		
 	}
 
 	private static void config(String[] args) throws Exception {
