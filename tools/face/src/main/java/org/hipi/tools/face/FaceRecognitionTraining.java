@@ -3,6 +3,7 @@ package org.hipi.tools.face;
 import java.io.BufferedReader;
 import java.io.DataInput;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.IntBuffer;
@@ -81,10 +82,6 @@ public class FaceRecognitionTraining {
 			}
 
 			Path peopleListPath = new Path(peopleListDir);
-			byte[] bytes = FileUtils.readFileToByteArray(new File("/tmp/test8/people-output/AngelSerialized"));
-			AngelSerialized ag = (AngelSerialized) SerializationUtils.deserialize(bytes);
-			System.out.println(ag.getKey() + " () " + ag.getValue());
-			
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " available: " + dis.available());
 //			System.out.println(peopleListPath + " readInt: " + dis.readInt());
@@ -101,7 +98,12 @@ public class FaceRecognitionTraining {
 			
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
-			hashMapPeople.readFields(dis);
+			try {
+				hashMapPeople.readFields(dis);
+			} catch(EOFException e){
+				hashMapPeople.clear();
+				hashMapPeople.readFields(FileSystem.get(conf).open(new Path(peopleListDir + "/AngelSerialized")));
+			}
 			dis.close();
 			
 			int count = 0;
