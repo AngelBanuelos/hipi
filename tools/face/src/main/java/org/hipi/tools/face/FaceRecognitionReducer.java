@@ -34,7 +34,7 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 			counter++;
 		}
 		peopleImages.set(imageArray);
-		peopleMap.put(key, new Text("Angel Test"));
+		peopleMap.put(key, peopleImages);
 		
 		context.write(NullWritable.get(), peopleMap);
 	}
