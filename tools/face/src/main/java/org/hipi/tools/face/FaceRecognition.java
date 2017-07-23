@@ -1,5 +1,6 @@
 package org.hipi.tools.face;
 
+import java.io.File;
 import java.net.URI;
 
 import org.apache.commons.cli.BasicParser;
@@ -94,8 +95,8 @@ public class FaceRecognition {
 
 		// Create just one reduce task
 //		job.setNumReduceTasks(1);
-
-		job.getConfiguration().setStrings("hipi.people.face.recognition.path", outputPeopleListDir);
+		String peopleMapInput = outputPeopleListDir + File.separator + "part-r-00000";
+		job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
 		
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);
