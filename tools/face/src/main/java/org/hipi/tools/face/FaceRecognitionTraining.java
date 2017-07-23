@@ -1,8 +1,10 @@
 package org.hipi.tools.face;
 
+import java.io.BufferedReader;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.IntBuffer;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -79,13 +81,14 @@ public class FaceRecognitionTraining {
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " : " + dis.available());
 			
-			Text testing = new Text();
-			testing.readFields(dis);
-			testing.readFields(dis);
-			testing.readFields(dis);
-			Thread.sleep(5000);
-			System.out.println("Text: " + testing.toString());
-			Thread.sleep(5000);
+			
+            BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+            String line;
+			line = br.readLine();
+			while (line != null) {
+				System.out.println(line);
+				line = br.readLine();
+			}
 			
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
