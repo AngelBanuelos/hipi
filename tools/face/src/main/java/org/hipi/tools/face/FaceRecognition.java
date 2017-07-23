@@ -65,7 +65,7 @@ public class FaceRecognition {
 		}
 		args = line.getArgs();
 		String outputPeopleListDir = args[1] + "/people-output/";
-		String peopleMapInput = outputPeopleListDir + File.separator + "part-r-00000";
+		String peopleMapInput = outputPeopleListDir + File.separator + "peopleMap";
 		// Initialize and configure MapReduce job
 
 		// Set input format class which parses the input HIB and spawns map

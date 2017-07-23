@@ -34,26 +34,25 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 			totalImagesPerFace++;
 			images.add(value);
 		}
-		
-		if(totalImagesPerFace == 0) {
+
+		if (totalImagesPerFace == 0) {
 			System.err.println("No images for people " + key.toString());
 			return;
 		}
 
 		ArrayOpenCVMatWritable peopleImages = new ArrayOpenCVMatWritable();
 		key = new Text(key + "_" + id++);
-		
+
 		peopleImages.setValues(images);
-		
+
 		peopleMap.put(key, peopleImages);
-		
-//		if (!FileSystem.get(new Configuration()).exists(new Path("/tmp/test8/people-output/AngelSerialized"))) {
-			peopleMap.write(	
-					FileSystem.get(new Configuration()).create(new Path("/tmp/test8/people-output/AngelSerialized")));
-//		} 
-		
+
+		Configuration conf = context.getConfiguration();
+		String peopleListDir = conf.get("hipi.people.face.recognition.path");
+
+		peopleMap.write(FileSystem.get(conf).create(new Path(peopleListDir)));
+
 		context.write(NullWritable.get(), peopleMap);
 	}
-	
 
 }
