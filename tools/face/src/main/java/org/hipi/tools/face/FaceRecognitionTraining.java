@@ -74,12 +74,12 @@ public class FaceRecognitionTraining {
 
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
-			System.out.println("peopleListPath " + dis.available());
-			dis.close();
+			System.out.println(peopleListPath + " : " + dis.available());
 			// Populate mat with mean data
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
 			hashMapPeople.readFields(dis);
+			dis.close();
 			
 			int count = 0;
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
