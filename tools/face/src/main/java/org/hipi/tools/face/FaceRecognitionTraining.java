@@ -80,17 +80,17 @@ public class FaceRecognitionTraining {
 
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
-			System.out.println(peopleListPath + " available: " + dis.available());
-			System.out.println(peopleListPath + " readInt: " + dis.readInt());
-//			System.out.println(peopleListPath + " readInt: " + getClass(dis.readByte()));
-			
-            BufferedReader br = new BufferedReader(new InputStreamReader(dis));
-            String line;
-			line = br.readLine();
-			while (line != null) {
-				System.out.println(line);
-				line = br.readLine();
-			}
+//			System.out.println(peopleListPath + " available: " + dis.available());
+//			System.out.println(peopleListPath + " readInt: " + dis.readInt());
+////			System.out.println(peopleListPath + " readInt: " + getClass(dis.readByte()));
+//			
+//            BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+//            String line;
+//			line = br.readLine();
+//			while (line != null) {
+//				System.out.println(line);
+//				line = br.readLine();
+//			}
 			
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();

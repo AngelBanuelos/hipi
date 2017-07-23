@@ -81,8 +81,8 @@ public class FaceRecognition {
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(OpenCVMatWritable.class);
 
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(NullWritable.class);
+	    job.setOutputKeyClass(NullWritable.class);
+	    job.setOutputValueClass(MapWritable.class);
 
 		if (overwrite) {
 			// configuration should contain reference to your namenode
