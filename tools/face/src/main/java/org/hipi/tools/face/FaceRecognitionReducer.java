@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.hipi.opencv.OpenCVMatWritable;
 
-public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, NullWritable, MapWritable> {
+public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Text, MapWritable> {
 
 	private static volatile int id = 0;
 	MapWritable peopleMap = new MapWritable();
@@ -36,6 +36,6 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 		peopleImages.set(imageArray);
 		peopleMap.put(key, peopleImages);
 		
-		context.write(NullWritable.get(), peopleMap);
+		context.write(key, peopleMap);
 	}
 }
