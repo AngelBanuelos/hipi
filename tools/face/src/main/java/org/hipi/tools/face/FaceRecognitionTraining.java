@@ -72,7 +72,7 @@ public class FaceRecognitionTraining {
 				System.exit(1);
 			}
 
-			Path peopleListPath = new Path(peopleListDir, "0000045_0");
+			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " : " + dis.available());
 			// Populate mat with mean data
