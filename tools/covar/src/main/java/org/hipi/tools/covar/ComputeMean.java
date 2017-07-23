@@ -3,7 +3,7 @@ package org.hipi.tools.covar;
 import org.hipi.mapreduce.BinaryOutputFormat;
 import org.hipi.imagebundle.mapreduce.HibInputFormat;
 import org.hipi.opencv.OpenCVMatWritable;
-
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;

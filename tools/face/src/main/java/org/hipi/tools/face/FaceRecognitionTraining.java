@@ -123,7 +123,7 @@ public class FaceRecognitionTraining {
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
 				Text key = (Text) entrySet.getKey();
 				String keyS = key.toString();
-				int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_")));
+				int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_") + 1));
 
 				ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
 
