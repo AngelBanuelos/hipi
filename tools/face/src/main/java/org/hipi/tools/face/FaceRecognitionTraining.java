@@ -77,14 +77,10 @@ public class FaceRecognitionTraining {
 
 			// Populate mat with mean data
 			MapWritable hashMapPeople = new MapWritable();
-			
-			byte[] b = new byte[1024];
-			if( ((DataInputStream) dis).read(b) != -1){ 
-				hashMapPeople.readFields(dis);
-			}
-			
-			int count = 0;
+			hashMapPeople.clear();
+			hashMapPeople.readFields(dis);
 
+			int count = 0;
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
 				if (entrySet.getValue() != null) {
 					ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
@@ -96,15 +92,15 @@ public class FaceRecognitionTraining {
 			MatVector imagesTemp = new MatVector(count);
 			Mat labelsTemp = new Mat(count, 1, opencv_core.CV_32SC1);
 			IntBuffer labelsBuf = labelsTemp.createBuffer();
-			
+
 			int counter = 0;
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
 				Text key = (Text) entrySet.getKey();
 				String keyS = key.toString();
 				int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_")));
-				
+
 				ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
-				
+
 				for (Writable img : imagesArray.get()) {
 					OpenCVMatWritable matWritable = (OpenCVMatWritable) img;
 					Mat matImg = matWritable.getMat();
@@ -113,7 +109,7 @@ public class FaceRecognitionTraining {
 					counter++;
 				}
 			}
-			
+
 			images = imagesTemp;
 			labels = labelsTemp;
 
@@ -126,21 +122,20 @@ public class FaceRecognitionTraining {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(images == null || labels == null) {
+		if (images == null || labels == null) {
 			return 1;
 		}
-		
+
 		String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
 		configFRG(fileName);
 
-		
 		System.out.println("training");
 		faceRecognizer.train(images, labels);
 		System.out.println("trained");
 
 		System.out.println("saving training");
 		faceRecognizer.save(saveLocation);
-		
+
 		System.out.println(saveLocation);
 
 		// success
@@ -168,7 +163,7 @@ public class FaceRecognitionTraining {
 			usage();
 		}
 		inputPath = leftArgs[0];
-//		outputPath = leftArgs[1];
+		// outputPath = leftArgs[1];
 
 		if (line.hasOption("h")) {
 			hdfsInput = true;
