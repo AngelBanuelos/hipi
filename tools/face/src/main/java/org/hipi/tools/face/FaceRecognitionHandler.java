@@ -12,9 +12,10 @@ public class FaceRecognitionHandler extends Configured implements Tool {
 	@Override
 	public int run(String[] args) throws Exception {
 
-		Configuration conf = Job.getInstance().getConfiguration();
+		Job job = Job.getInstance();
+		Configuration conf = job.getConfiguration();
 
-		if (FaceRecognition.run(args) == 1) {
+		if (FaceRecognition.run(args, job) == 1) {
 			System.out.println("People List creation failed.");
 			return 1;
 		}

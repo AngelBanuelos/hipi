@@ -43,11 +43,10 @@ public class FaceRecognition {
 		System.exit(0);
 	}
 
-	public static int run(String[] args) throws Exception {
+	public static int run(String[] args, Job job) throws Exception {
 
 		CommandLine line = null;
 		String action = null;
-		
 
 		try {
 			line = parser.parse(options, args);
@@ -65,7 +64,7 @@ public class FaceRecognition {
 		String outputPeopleListDir = args[1] + "/people-output/";
 		
 		// Initialize and configure MapReduce job
-		Job job = Job.getInstance();
+		
 		// Set input format class which parses the input HIB and spawns map
 		// tasks
 		job.setInputFormatClass(HibInputFormat.class);
