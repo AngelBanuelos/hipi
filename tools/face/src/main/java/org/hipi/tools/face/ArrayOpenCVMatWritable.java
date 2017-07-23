@@ -22,7 +22,7 @@ public class ArrayOpenCVMatWritable extends ArrayWritable {
 		OpenCVMatWritable[] imageArray = new OpenCVMatWritable[values.size()];
 
 		for (OpenCVMatWritable value : values) {
-			imageArray[counter] = new OpenCVMatWritable(value.getMat());
+			imageArray[counter] = value;
 			counter++;
 		}
 
