@@ -16,6 +16,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -33,6 +34,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.MatVector;
 import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
 import org.hipi.opencv.OpenCVMatWritable;
+import org.hipi.tools.face.FaceRecognitionReducer.AngelSerialized;
 
 public class FaceRecognitionTraining {
 
@@ -79,6 +81,10 @@ public class FaceRecognitionTraining {
 			}
 
 			Path peopleListPath = new Path(peopleListDir);
+			byte[] bytes = FileUtils.readFileToByteArray(new File("/tmp/test8/people-output/AngelSerialized"));
+			AngelSerialized ag = (AngelSerialized)SerializationUtils.deserialize(bytes);
+			System.out.println(ag.getKey().toString() + " () " + ag.getValue().toString());
+			
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " available: " + dis.available());
 //			System.out.println(peopleListPath + " readInt: " + dis.readInt());
