@@ -102,7 +102,7 @@ public class FaceRecognitionTraining {
 				hashMapPeople.readFields(dis);
 			} catch(EOFException e){
 				hashMapPeople.clear();
-				hashMapPeople.readFields(FileSystem.get(conf).open(new Path(peopleListDir + "/AngelSerialized")));
+				hashMapPeople.readFields(FileSystem.get(conf).open(new Path("/tmp/test8/people-output/AngelSerialized")));
 			}
 			dis.close();
 			
