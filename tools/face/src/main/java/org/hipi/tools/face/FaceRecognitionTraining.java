@@ -13,6 +13,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -21,6 +22,8 @@ import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableFactories;
+import org.apache.hadoop.io.WritableUtils;
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_face;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -75,10 +78,15 @@ public class FaceRecognitionTraining {
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " : " + dis.available());
-			// Populate mat with mean data
+			
+			Text testing = new Text();
+			testing.readFields(dis);
+			System.out.println("Text: " + testing.toString());
+			
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
 			hashMapPeople.readFields(dis);
+			
 			dis.close();
 			
 			int count = 0;
