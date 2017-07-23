@@ -74,12 +74,13 @@ public class FaceRecognitionTraining {
 
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
+			
 
 			// Populate mat with mean data
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
 			hashMapPeople.readFields(dis);
-
+			
 			int count = 0;
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
 				if (entrySet.getValue() != null) {
@@ -151,12 +152,9 @@ public class FaceRecognitionTraining {
 			exp.printStackTrace();
 			usage();
 		}
-		System.out.println("line  " + line);
 		if (line == null) {
 			usage();
 		}
-
-		System.out.println("Args " + line.getArgs());
 
 		String[] leftArgs = line.getArgs();
 		if (leftArgs.length != 2) {
