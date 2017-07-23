@@ -53,15 +53,12 @@ public class FaceRecognitionReducer extends Reducer<Text, OpenCVMatWritable, Nul
 		System.out.println("Total Images   " + counter);
 		peopleImages.set(imageArray);
 		peopleMap.put(key, peopleImages);
-		FileUtils.writeByteArrayToFile(new File("/tmp/test8/people-output/AngelSerialized"),
-				SerializationUtils.serialize(new AngelSerialized("Angel_Key", "Angel_Value")));
+		
 		if (!FileSystem.get(new Configuration()).exists(new Path("/tmp/test8/people-output/AngelSerialized"))) {
 			peopleMap.write(	
 					FileSystem.get(new Configuration()).create(new Path("/tmp/test8/people-output/AngelSerialized")));
-		} else {
-			peopleMap.write(
-					(FileSystem.get(new Configuration()).append(new Path("/tmp/test8/people-output/AngelSerialized"))));
-		}
+		} 
+		
 		context.write(NullWritable.get(), peopleMap);
 	}
 
