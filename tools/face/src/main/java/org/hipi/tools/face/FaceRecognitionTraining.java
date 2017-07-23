@@ -34,7 +34,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.MatVector;
 import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
 import org.hipi.opencv.OpenCVMatWritable;
-import org.hipi.tools.face.FaceRecognitionReducer.AngelSerialized;
+import org.hipi.tools.face.AngelSerialized;
 
 public class FaceRecognitionTraining {
 
