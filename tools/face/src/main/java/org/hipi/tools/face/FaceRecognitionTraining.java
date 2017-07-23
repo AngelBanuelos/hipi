@@ -82,28 +82,12 @@ public class FaceRecognitionTraining {
 			Path peopleListPath = new Path(peopleListDir);
 			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
 			System.out.println(peopleListPath + " available: " + dis.available());
-//			System.out.println(peopleListPath + " readInt: " + dis.readInt());
-//			System.out.println(peopleListPath + " className: " + dis.readUTF());
-////			System.out.println(peopleListPath + " readInt: " + getClass(dis.readByte()));
-//			
-//            BufferedReader br = new BufferedReader(new InputStreamReader(dis));
-//            String line;
-//			line = br.readLine();
-//			while (line != null) {
-//				System.out.println(line);
-//				line = br.readLine();
-//			}
-			
 			MapWritable hashMapPeople = new MapWritable();
 			hashMapPeople.clear();
-			try {
-				hashMapPeople.readFields(dis);
-			} catch(EOFException e){
-				hashMapPeople.clear();
-				hashMapPeople.readFields(FileSystem.get(conf).open(new Path("/tmp/test8/people-output/AngelSerialized")));
-			}
+			hashMapPeople.readFields(dis);
+
 			dis.close();
-			
+
 			int count = 0;
 			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
 				if (entrySet.getValue() != null) {
@@ -123,7 +107,7 @@ public class FaceRecognitionTraining {
 				Text key = (Text) entrySet.getKey();
 				String keyS = key.toString();
 				int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_") + 1));
-				System.out.println("Name: " + keyS +  " label: " + label);
+				System.out.println("Name: " + keyS + " label: " + label);
 				ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
 
 				for (Writable img : imagesArray.get()) {
@@ -135,7 +119,6 @@ public class FaceRecognitionTraining {
 				}
 			}
 
-			
 			try {
 				config(args);
 			} catch (Exception e) {
@@ -159,12 +142,12 @@ public class FaceRecognitionTraining {
 
 			// success
 			return 0;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 1;
 		}
-		
+
 	}
 
 	private static void config(String[] args) throws Exception {
