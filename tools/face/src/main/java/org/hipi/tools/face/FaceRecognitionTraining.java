@@ -69,6 +69,11 @@ public class FaceRecognitionTraining {
 				System.err.println("People List do not exists - cannot continue. Exiting.");
 				System.exit(1);
 			}
+			try {
+				config(args);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
 			configFRG(fileName);
 			if (!FileSystem.get(conf).exists(new Path(saveLocation)) || forceTrainig) {
@@ -112,11 +117,6 @@ public class FaceRecognitionTraining {
 					}
 				}
 
-				try {
-					config(args);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 				if (imagesTemp == null || labelsTemp == null) {
 					return 1;
 				}
