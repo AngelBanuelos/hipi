@@ -1,7 +1,6 @@
 package org.hipi.tools.face;
 
 import java.io.File;
-import java.net.URI;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -10,11 +9,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.MapWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -81,18 +78,18 @@ public class FaceRecognition {
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(OpenCVMatWritable.class);
 
-	    job.setOutputKeyClass(MapWritable.class);
-	    job.setOutputValueClass(MapWritable.class);
+		job.setOutputKeyClass(MapWritable.class);
+		job.setOutputValueClass(MapWritable.class);
 
 		if (overwrite) {
 			// configuration should contain reference to your namenode
 			FileSystem fs = FileSystem.get(new Configuration());
 			// true stands for recursively deleting the folder you gave
 			fs.delete(new Path(args[1]), true);
-			
+
 		} else {
 			FileSystem fs = FileSystem.get(new Configuration());
-			if(fs.exists(new Path(peopleMapInput))){
+			if (fs.exists(new Path(peopleMapInput))) {
 				job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
 				return 0;
 			}
@@ -104,8 +101,12 @@ public class FaceRecognition {
 
 		// Create just one reduce task
 		// job.setNumReduceTasks(1);
-
+		
 		job.getConfiguration().setStrings("hipi.people.face.recognition.path", peopleMapInput);
+
+		// FSDataInputStream dis =
+		// FileSystem.get(job.getConfiguration()).open(new Path(args[0]));
+		job.getConfiguration().set("mapred.max.split.size", "2398282");
 
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);

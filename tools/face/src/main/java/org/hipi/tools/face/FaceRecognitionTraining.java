@@ -1,14 +1,8 @@
 package org.hipi.tools.face;
 
-import java.io.BufferedReader;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.IntBuffer;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -16,26 +10,22 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.ArrayWritable;
-import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableFactories;
-import org.apache.hadoop.io.WritableUtils;
 import org.bytedeco.javacpp.opencv_core;
-import org.bytedeco.javacpp.opencv_face;
 import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_core.MatVector;
+import org.bytedeco.javacpp.opencv_face;
+import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
+import org.hipi.image.RasterImage;
 import org.hipi.opencv.OpenCVMatWritable;
-import org.hipi.tools.face.AngelSerialized;
 
 public class FaceRecognitionTraining {
 
@@ -46,10 +36,11 @@ public class FaceRecognitionTraining {
 	private static int recognizerMethod = 1;
 	private static String saveLocation = "";
 	private static String inputPath = "";
-	private static String outputPath = "/root/hipi";
 	private static boolean faceRecognizerLoaded = false;
 	private static boolean forceTrainig = false;
 	private static boolean hdfsInput = false;
+	private static final String NEURAL_NETWORK_PATH = "/hipi/face/recognition/neural/";
+	private static String img = "";
 
 	static {
 		options.addOption("f", "force", false, "force overwrite if output HIB already exists");
@@ -78,67 +69,90 @@ public class FaceRecognitionTraining {
 				System.err.println("People List do not exists - cannot continue. Exiting.");
 				System.exit(1);
 			}
+			if (!FileSystem.get(conf).exists(new Path(saveLocation)) || forceTrainig) {
 
-			Path peopleListPath = new Path(peopleListDir);
-			FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
-			System.out.println(peopleListPath + " available: " + dis.available());
-			MapWritable hashMapPeople = new MapWritable();
-			hashMapPeople.clear();
-			hashMapPeople.readFields(dis);
+				Path peopleListPath = new Path(peopleListDir);
+				FSDataInputStream dis = FileSystem.get(conf).open(peopleListPath);
+				System.out.println(peopleListPath + " available: " + dis.available());
+				MapWritable hashMapPeople = new MapWritable();
+				hashMapPeople.clear();
+				hashMapPeople.readFields(dis);
+				dis.close();
 
-			dis.close();
+				int count = 0;
+				for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
+					if (entrySet.getValue() != null) {
+						ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
+						if (imagesArray.get() != null)
+							count += imagesArray.get().length;
+					}
+				}
+				System.out.println(" Total Images: " + count);
 
-			int count = 0;
-			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
-				if (entrySet.getValue() != null) {
+				MatVector imagesTemp = new MatVector(count);
+				Mat labelsTemp = new Mat(count, 1, opencv_core.CV_32SC1);
+				IntBuffer labelsBuf = labelsTemp.createBuffer();
+
+				int counter = 0;
+				for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
+					Text key = (Text) entrySet.getKey();
+					String keyS = key.toString();
+					int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_") + 1));
+					System.out.println("Name: " + keyS + " label: " + label);
 					ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
-					if (imagesArray.get() != null)
-						count += imagesArray.get().length;
+
+					for (Writable img : imagesArray.get()) {
+						OpenCVMatWritable matWritable = (OpenCVMatWritable) img;
+						Mat matImg = matWritable.getMat();
+						imagesTemp.put(counter, matImg);
+						labelsBuf.put(counter, label);
+						counter++;
+					}
 				}
-			}
-			System.out.println(" Total Images: " + count);
 
-			MatVector imagesTemp = new MatVector(count);
-			Mat labelsTemp = new Mat(count, 1, opencv_core.CV_32SC1);
-			IntBuffer labelsBuf = labelsTemp.createBuffer();
-
-			int counter = 0;
-			for (Entry<Writable, Writable> entrySet : hashMapPeople.entrySet()) {
-				Text key = (Text) entrySet.getKey();
-				String keyS = key.toString();
-				int label = Integer.parseInt(keyS.substring(keyS.lastIndexOf("_") + 1));
-				System.out.println("Name: " + keyS + " label: " + label);
-				ArrayWritable imagesArray = ((ArrayWritable) entrySet.getValue());
-
-				for (Writable img : imagesArray.get()) {
-					OpenCVMatWritable matWritable = (OpenCVMatWritable) img;
-					Mat matImg = matWritable.getMat();
-					imagesTemp.put(counter, matImg);
-					labelsBuf.put(counter, label);
-					counter++;
+				try {
+					config(args);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				if (imagesTemp == null || labelsTemp == null) {
+					return 1;
+				}
+
+				String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
+				configFRG(fileName);
+
+				System.out.println("training");
+				faceRecognizer.train(imagesTemp, labelsTemp);
+				System.out.println("trained");
+
+				System.out.println("saving training");
+				faceRecognizer.save(saveLocation);
+				
+				if (forceTrainig) {
+					FileSystem.get(conf).delete(new Path(saveLocation), true);
+				}
+
+				FileSystem.get(conf).copyFromLocalFile(new Path(saveLocation), new Path(saveLocation));
+
+				System.out.println(saveLocation);
+			} else if (new File(saveLocation).exists()) {
+				faceRecognizer.load(saveLocation);
+				faceRecognizerLoaded = true;
+			} else {
+				FileSystem.get(conf).copyToLocalFile(new Path(saveLocation), new Path(saveLocation));
+				faceRecognizer.load(saveLocation);
+				faceRecognizerLoaded = true;
 			}
 
-			try {
-				config(args);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (imagesTemp == null || labelsTemp == null) {
-				return 1;
-			}
-
-			String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
-			configFRG(fileName);
-
-			System.out.println("training");
-			faceRecognizer.train(imagesTemp, labelsTemp);
-			System.out.println("trained");
-
-			System.out.println("saving training");
-			faceRecognizer.save(saveLocation);
-
-			System.out.println(saveLocation);
+			if (new File(img).exists()) {
+				Mat imageToPredict = opencv_imgcodecs.imread(img, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+				System.out.println("Prediction: " + faceRecognizer.predict_label(imageToPredict));
+			} else if (FileSystem.get(conf).exists(new Path(img))) {
+				FileSystem.get(conf).copyToLocalFile(new Path(img), new Path(img));
+				Mat imageToPredict = opencv_imgcodecs.imread(img, opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+				System.out.println("Prediction: " + faceRecognizer.predict_label(imageToPredict));
+			} 
 
 			// success
 			return 0;
@@ -148,6 +162,20 @@ public class FaceRecognitionTraining {
 			return 1;
 		}
 
+	}
+
+	public int predict(RasterImage floatImage) {
+		Mat testImage = null;
+		FaceUtils.convertFloatImageToGrayscaleMat(floatImage, testImage);
+		int predictedLabel = faceRecognizer.predict_label(testImage);
+		return predictedLabel;
+	}
+
+	public int predict(Mat image) {
+		// Mat imageRGB = image;
+		// opencv_imgproc.cvtColor(imageRGB, image, CV_RGB2GRAY);
+		int predictedLabel = faceRecognizer.predict_label(image);
+		return predictedLabel;
 	}
 
 	private static void config(String[] args) throws Exception {
@@ -169,6 +197,7 @@ public class FaceRecognitionTraining {
 		}
 		inputPath = leftArgs[0];
 		// outputPath = leftArgs[1];
+		img = leftArgs[2];
 
 		if (line.hasOption("h")) {
 			hdfsInput = true;
@@ -194,27 +223,22 @@ public class FaceRecognitionTraining {
 		case 1:
 			System.out.println("opencv_face.createLBPHFaceRecognizer()");
 			faceRecognizer = opencv_face.createLBPHFaceRecognizer();
-			saveLocation = outputPath + name + ".lbph.predict.opencv";
+			saveLocation = NEURAL_NETWORK_PATH + name + ".lbph.predict.opencv";
 			break;
 		case 2:
 			System.out.println("opencv_face.createFisherFaceRecognizer()");
 			faceRecognizer = opencv_face.createFisherFaceRecognizer();
-			saveLocation = outputPath + name + ".fisher.predict.opencv";
+			saveLocation = NEURAL_NETWORK_PATH + name + ".fisher.predict.opencv";
 			break;
 		case 3:
 			System.out.println("opencv_face.createEigenFaceRecognizer()");
 			faceRecognizer = opencv_face.createEigenFaceRecognizer();
-			saveLocation = outputPath + name + ".eigen.predict.opencv";
+			saveLocation = NEURAL_NETWORK_PATH + name + ".eigen.predict.opencv";
 			break;
 		default:
 			System.err.println("Method do not exists");
 			System.exit(0);
 		}
 
-		if (!forceTrainig && new File(saveLocation).exists()) {
-			faceRecognizer.load(saveLocation);
-			faceRecognizerLoaded = true;
-			return;
-		}
 	}
 }
