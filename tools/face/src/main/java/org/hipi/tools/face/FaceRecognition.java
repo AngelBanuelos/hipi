@@ -106,7 +106,7 @@ public class FaceRecognition {
 
 		// FSDataInputStream dis =
 		// FileSystem.get(job.getConfiguration()).open(new Path(args[0]));
-		job.getConfiguration().set("mapred.max.split.size", "2398282");
+		job.getConfiguration().set("mapreduce.input.fileinputformat.split.maxsize", "2398282");
 
 		// Execute the MapReduce job and block until it completes
 		boolean success = job.waitForCompletion(true);

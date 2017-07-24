@@ -39,7 +39,7 @@ public class FaceRecognitionTraining {
 	private static boolean faceRecognizerLoaded = false;
 	private static boolean forceTrainig = false;
 	private static boolean hdfsInput = false;
-	private static final String NEURAL_NETWORK_PATH = "/hipi/face/recognition/neural/";
+	private static final String NEURAL_NETWORK_PATH = "/hipi/face/recognition/neural";
 	private static String img = "";
 
 	static {
