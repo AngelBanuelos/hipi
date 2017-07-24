@@ -193,7 +193,7 @@ public class FaceRecognitionTraining {
 		}
 
 		String[] leftArgs = line.getArgs();
-		if (leftArgs.length != 2) {
+		if (leftArgs.length != 3) {
 			usage();
 		}
 		inputPath = leftArgs[0];
