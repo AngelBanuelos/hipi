@@ -69,6 +69,8 @@ public class FaceRecognitionTraining {
 				System.err.println("People List do not exists - cannot continue. Exiting.");
 				System.exit(1);
 			}
+			String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
+			configFRG(fileName);
 			if (!FileSystem.get(conf).exists(new Path(saveLocation)) || forceTrainig) {
 
 				Path peopleListPath = new Path(peopleListDir);
@@ -119,8 +121,7 @@ public class FaceRecognitionTraining {
 					return 1;
 				}
 
-				String fileName = inputPath.substring(inputPath.lastIndexOf(File.separator));
-				configFRG(fileName);
+				
 
 				System.out.println("training");
 				faceRecognizer.train(imagesTemp, labelsTemp);
