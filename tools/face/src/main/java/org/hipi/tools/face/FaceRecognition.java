@@ -38,7 +38,7 @@ public class FaceRecognition {
 	private static void usage() {
 		// usage
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("face.jar [options] <image directory HIB> <image(s) to predict>", options);
+		formatter.printHelp("face.jar [options] <image directory HIB> <output> <image(s) to predict>", options);
 
 		System.exit(0);
 	}
@@ -53,7 +53,7 @@ public class FaceRecognition {
 		} catch (ParseException exp) {
 			usage();
 		}
-		if (line == null || line.getArgs() == null || line.getArgs().length != 2) {
+		if (line == null || line.getArgs() == null || line.getArgs().length != 3) {
 			usage();
 		}
 		boolean overwrite = false;
