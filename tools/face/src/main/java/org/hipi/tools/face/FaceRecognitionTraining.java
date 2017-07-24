@@ -113,7 +113,7 @@ public class FaceRecognitionTraining {
 						Mat matImg = matWritable.getMat();
 						imagesTemp.put(counter, matImg);
 						labelsBuf.put(counter, label);
-						System.out.printf("Counter: %d", counter);
+						System.out.printf("\rCounter: %d Label: %d ", counter, label);
 						counter++;
 						
 					}
